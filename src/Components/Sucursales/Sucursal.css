@@ -1,0 +1,24 @@
+.btnAgregar {
+    padding: 10px 35px;
+    cursor: pointer;
+    background-color: #128f10;
+    border-radius: 6px;
+    border: 2px solid #128f10;
+    color: #fff;
+    font-size: 15px;
+    font-weight: bold;
+    transition: 0.35s;
+    display: inline-block;
+    margin: auto;
+  }
+
+.btnAgregar:hover {
+    transform: scale(1.05);
+  }
+
+.containerBtn {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
