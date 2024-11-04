@@ -1,11 +1,11 @@
 import React from 'react';
 
-const PersonalSelectedModal = ({ persona, onClose }) => {
+const PersonalSelectedModal = ({ persona, onClose, vista }) => {
   if (!persona) return null;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center w-full h-full bg-black bg-opacity-50">
-      <div className="relative p-3 w-11/12 max-w-lg max-h-[80vh] bg-white rounded-lg shadow dark:bg-gray-700 overflow-y-auto">
+      <div className="relative p-3 w-full max-w-2xl max-h-[80vh] bg-white rounded-lg shadow dark:bg-gray-700 overflow-y-auto">
         <div className="flex items-center justify-between p-4 border-b rounded-t dark:border-gray-600">
           <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
             Detalles de {persona.nombre}
@@ -47,45 +47,69 @@ const PersonalSelectedModal = ({ persona, onClose }) => {
           <p className="leading-relaxed text-gray-500 dark:text-gray-400">
             <strong>Email:</strong> {persona.email}
           </p>
-          <p className="leading-relaxed text-gray-500 dark:text-gray-400">
-            <strong>Dirección:</strong> {persona.direccion}
-          </p>
+          {vista !== 'Cliente' && (
+            <>  
+              <p className="leading-relaxed text-gray-500 dark:text-gray-400">
+                <strong>Dirección:</strong> {persona.direccion}
+              </p>
+            </>
+          )}
           <p className="leading-relaxed text-gray-500 dark:text-gray-400">
             <strong>RFC:</strong> {persona.rfc}
           </p>
           <p className="leading-relaxed text-gray-500 dark:text-gray-400">
             <strong>Discapacidad:</strong> {persona.discapacidad ? 'Sí' : 'No'}
           </p>
-          <p className="leading-relaxed text-gray-500 dark:text-gray-400">
-            <strong>Estado Civil:</strong> {persona.estadoCivil}
-          </p>
+          {vista !== 'Cliente' && (
+            <>
+              <p className="leading-relaxed text-gray-500 dark:text-gray-400">
+                <strong>Estado Civil:</strong> {persona.estadoCivil}
+              </p>
+            </>
+          )}
           <p className="leading-relaxed text-gray-500 dark:text-gray-400">
             <strong>Nivel de Estudios:</strong> {persona.nivelDeEstudios}
           </p>
-          <p className="leading-relaxed text-gray-500 dark:text-gray-400">
-            <strong>Fecha de Contratación:</strong> {persona.fechaContratacion}
-          </p>
-          <p className="leading-relaxed text-gray-500 dark:text-gray-400">
-            <strong>Turno:</strong> {persona.turno}
-          </p>
-          <p className="leading-relaxed text-gray-500 dark:text-gray-400">
-            <strong>Años de Experiencia:</strong> {persona.aniosDeExperiencia}
-          </p>
-          <p className="leading-relaxed text-gray-500 dark:text-gray-400">
-            <strong>Horas de Trabajo:</strong> {persona.horasDeTrabajo}
-          </p>
+          {vista !== 'Cliente' && (
+            <>
+              <p className="leading-relaxed text-gray-500 dark:text-gray-400">
+                <strong>Fecha de Contratación:</strong> {persona.fechaContratacion}
+              </p>
+              <p className="leading-relaxed text-gray-500 dark:text-gray-400">
+                <strong>Turno:</strong> {persona.turno}
+              </p>
+              <p className="leading-relaxed text-gray-500 dark:text-gray-400">
+                <strong>Años de Experiencia:</strong> {persona.aniosDeExperiencia}
+              </p>
+              <p className="leading-relaxed text-gray-500 dark:text-gray-400">
+                <strong>Horas de Trabajo:</strong> {persona.horasDeTrabajo}
+              </p>  
+            </>
+          )}
           <p className="leading-relaxed text-gray-500 dark:text-gray-400">
             <strong>Estado:</strong> {persona.estado}
           </p>
           <p className="leading-relaxed text-gray-500 dark:text-gray-400">
-            <strong>Sucursal ID:</strong> {persona.sucursal.id}
+            {vista === 'Cliente' ? (
+              <>
+                <strong>Sucursal ID:</strong> {persona.idSucursal}
+              </>
+            ) : (
+              <>
+                <strong>Sucursal ID:</strong> {persona.sucursal.id}
+              </>
+            )}
           </p>
-          <p className="leading-relaxed text-gray-500 dark:text-gray-400">
-            <strong>Responsabilidades:</strong> {persona.responsabilidades}
-          </p>
-          <p className="leading-relaxed text-gray-500 dark:text-gray-400">
-            <strong>Sueldo:</strong> {persona.sueldo}
-          </p>
+          {vista !== 'Cliente' && (
+            <>  
+              <p className="leading-relaxed text-gray-500 dark:text-gray-400">
+                <strong>Responsabilidades:</strong> {persona.responsabilidades}
+              </p>
+              <p className="leading-relaxed text-gray-500 dark:text-gray-400">
+                <strong>Sueldo:</strong> {persona.sueldo}
+              </p>
+            </>
+          )}
         </div>
 
         <div className="flex items-center p-4 border-t border-gray-200 rounded-b dark:border-gray-600">

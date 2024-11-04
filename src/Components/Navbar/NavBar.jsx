@@ -11,15 +11,36 @@ export const NavBar = () => {
     useEffect(() => {
         const role = localStorage.getItem('role');
         setUserRole(role);
+
+        const token = localStorage.getItem('token');
+        const tokenTimestamp = localStorage.getItem('tokenTimestamp');
+        const tokenExpirationTime = 3600 * 1000;
+
+        if (token && tokenTimestamp) {
+            const timeElapsed = Date.now() - parseInt(tokenTimestamp, 10);
+            
+            if (timeElapsed >= tokenExpirationTime) {
+                handleLogoutClick();
+            } else {
+                const remainingTime = tokenExpirationTime - timeElapsed;
+                const timeoutId = setTimeout(() => {
+                    handleLogoutClick();
+                }, remainingTime);
+
+                return () => clearTimeout(timeoutId);
+            }
+        }
     }, []);
 
     const handleLoginClick = () => {
+        localStorage.setItem('tokenTimestamp', Date.now().toString());
         navigate('/login');
     };
 
     const handleLogoutClick = () => {
         localStorage.removeItem('token');
         localStorage.removeItem('role');
+        localStorage.removeItem('tokenTimestamp');
         setUserRole(null);
         navigate('/');
     };
@@ -28,7 +49,7 @@ export const NavBar = () => {
         <header className="header">
             <div className="logo">
                 <Link to="/">
-                    <img src={logo} alt="Logo de la marca"/>
+                    <img src={logo} alt="Logo de la marca" />
                 </Link>
             </div>
             <nav>
@@ -41,11 +62,12 @@ export const NavBar = () => {
                     )}
                     {userRole === 'ROLE_GERENTE' && (
                         <>
-                            <li>Personal</li>
-                            <li>Clientes</li>
+                            <li><Link to="/ejecutivos">Ejecutivos</Link></li>
+                            <li><Link to="/cajeros">Cajeros</Link></li>
+                            <li><Link to="/clientes">Clientes</Link></li>
                         </>
                     )}
-                </ul>            
+                </ul>
             </nav>
             {userRole ? (
                 <button className="btn" onClick={handleLogoutClick}>Cerrar Sesión</button>

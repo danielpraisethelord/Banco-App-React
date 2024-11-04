@@ -1,39 +1,29 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Login from './Components/Login/Login';
 import { Bienvenida } from './Components/Bienvenida/Bienvenida';
 import { Sucursales } from './Components/Sucursales/Sucursales';
 import './index.css';
-import { Personal } from './Components/Personal/Personal';
+import { PersonalCajero } from './Components/Personal/PersonalCajero';
+import { ClienteTable } from './Components/Cliente/ClienteTable';
+import { PersonalAdmin } from './Components/Personal/PersonalAdmin';
+import { NotFound404 } from './Components/404/NotFound404';
+import { EjecutivoTable } from './Components/Ejecutivo/EjecutivoTable';
 
-const App = () => {
-    useEffect(() => {
-      const checkTokenExpiration = () => {
-        const token = localStorage.getItem('token');
-        if (token) {
-          const decodedToken = JSON.parse(atob(token.split('.')[1]));
-          const currentTime = Math.floor(Date.now() / 1000);
-          if (decodedToken.exp < currentTime) {
-            localStorage.removeItem('token');
-            console.log('Token expired and removed from localStorage');
-          }
-        }
-      };
-  
-      // Check token expiration every minute
-      const intervalId = setInterval(checkTokenExpiration, 60000);
-  
-      // Cleanup interval on component unmount
-      return () => clearInterval(intervalId);
-    }, []);
-  
+const App = () => {  
+    const userRole = localStorage.getItem('role');
+    
     return (
       <Router>
         <Routes>
           <Route path="/" element={<Bienvenida />} />
           <Route path="/login" element={<Login />} />
-          <Route path="/sucursales" element={<Sucursales />} />
-          <Route path="/personal" element={<Personal />} />
+          {userRole === 'ROLE_ADMIN' && <Route path='/sucursales' element={<Sucursales/>}/>}
+          {userRole === 'ROLE_ADMIN' && <Route path='/personal' element={<PersonalAdmin/>} /> }
+          {userRole === 'ROLE_GERENTE' && <Route path="/ejecutivos" element={<EjecutivoTable />} />}
+          {userRole === 'ROLE_GERENTE' && <Route path="/cajeros" element={<PersonalCajero />} />}
+          {userRole === 'ROLE_GERENTE' && <Route path="/clientes" element={<ClienteTable />} />}
+          <Route path="*" element={ <NotFound404/> } />
         </Routes>
       </Router>
     );
