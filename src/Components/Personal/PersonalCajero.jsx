@@ -9,7 +9,13 @@ export const PersonalCajero = () => {
         <>
             <NavBar />
             <div className="containerBtn">
-                <button className="btnAgregar">Agregar Cajero</button>
+                <button 
+                    className="btnAgregar" 
+                    style={{fontSize : '20px', borderRadius : '10px', marginTop : '20px'}}
+                >
+                    <i class="fa-regular fa-address-book" style={{marginRight : '8px', fontSize : '30px'}}></i>
+                    Agregar Cajero
+                </button>
             </div>
             <Personal token={token} userRole={userRole} vista={'Cajero'}/>
         </>

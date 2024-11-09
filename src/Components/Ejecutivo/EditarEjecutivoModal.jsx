@@ -1,16 +1,8 @@
 import { useEffect, useState } from "react";
-import SucursalService from "../../service/SucursalService";
+import SucursalService from '../../service/SucursalService';
 import EjecutivoService from "../../service/EjecutivoService";
 
-const obtenerFechaActual = () => {
-    const hoy = new Date();
-    const dia = String(hoy.getDate()).padStart(2, '0');
-    const mes = String(hoy.getMonth() + 1).padStart(2, '0');
-    const año = hoy.getFullYear();
-    return `${año}-${mes}-${dia}`;
-}
-
-export const AgregarEjecutivoModal = ({ isVisible, onClose, onAddSuccess }) => {
+export const EditarEjecutivoModal = ({ isVisible, onClose, onEditSuccess, ejecutivo }) => {
     const [password, setPassword] = useState('');
     const [nombre, setNombre] = useState('');
     const [apellidoPaterno, setApellidoPaterno] = useState('');
@@ -24,10 +16,10 @@ export const AgregarEjecutivoModal = ({ isVisible, onClose, onAddSuccess }) => {
     const [discapacidad, setDiscapacidad] = useState(false);
     const [estadoCivil, setEstadoCivil] = useState('');
     const [nivelDeEstudios, setNivelDeEstudios] = useState('');
-    const [fechaContratacion, setFechaContratacion] = useState(obtenerFechaActual());
+    const [fechaContratacion, setFechaContratacion] = useState('');
     const [turno, setTurno] = useState('');
     const [aniosDeExperiencia, setAniosDeExperiencia] = useState('');
-    const [sucursalId, setSucursalId] = useState('');
+    const [sucursalId, setSucursalId] = useState(ejecutivo?.sucursal?.id || "");
     const [responsabilidades, setResponsabilidades] = useState('');
     const [sueldo, setSueldo] = useState('');
     const [estiloDeClientesAsignados, setEstiloDeClientesAsignados] = useState('');
@@ -35,26 +27,52 @@ export const AgregarEjecutivoModal = ({ isVisible, onClose, onAddSuccess }) => {
     const [departamento, setDepartamento] = useState('');
     const [sucursales, setSucursales] = useState([]);
     const token = localStorage.getItem('token');
-
+    
+    useEffect(() => {
+        if (ejecutivo) {
+            console.log(ejecutivo);
+            setNombre(ejecutivo.nombre);
+            setApellidoPaterno(ejecutivo.apellidoPaterno);
+            setApellidoMaterno(ejecutivo.apellidoMaterno);
+            setFechaNacimiento(ejecutivo.fechaNacimiento);
+            setGenero(ejecutivo.genero);
+            setTelefono(ejecutivo.telefono);
+            setEmail(ejecutivo.email);
+            setDireccion(ejecutivo.direccion);
+            setRfc(ejecutivo.rfc);
+            setDiscapacidad(ejecutivo.discapacidad);
+            setEstadoCivil(ejecutivo.estadoCivil);
+            setNivelDeEstudios(ejecutivo.nivelDeEstudios);
+            setFechaContratacion(ejecutivo.fechaContratacion);
+            setTurno(ejecutivo.turno);
+            setAniosDeExperiencia(ejecutivo.aniosDeExperiencia);
+            setResponsabilidades(ejecutivo.responsabilidades);
+            setSueldo(ejecutivo.sueldo);
+            setEstiloDeClientesAsignados(ejecutivo.estiloDeClientesAsignados);
+            setObjetivosDeVentas(ejecutivo.objetivosDeVentas);
+            setDepartamento(ejecutivo.departamento);
+            setSucursalId(ejecutivo.sucursal.id);
+        }
+    }, [ejecutivo]);
+    
     useEffect(() => {
         const fetchSucursales = async () => {
             try {
+                const token = localStorage.getItem('token'); // Asegúrate de obtener el token si es necesario
                 const response = await SucursalService.getSucursalesNombreId(token);
                 setSucursales(response);
             } catch (error) {
                 console.error('Error fetching sucursales:', error);
             }
         };
-
+        
         fetchSucursales();
     }, []);
 
-    const handleSubmit = async (e) => {
+    const handleEditEjecutivo = async (e) => {
         e.preventDefault();
         try {
-            const horasDeTrabajo = turno === 'Completo' ? 8 : 4;
-            const newEjecutivo = {
-                password,
+            const editEjecutivo = {
                 nombre,
                 apellidoPaterno,
                 apellidoMaterno,
@@ -70,21 +88,19 @@ export const AgregarEjecutivoModal = ({ isVisible, onClose, onAddSuccess }) => {
                 fechaContratacion,
                 turno,
                 aniosDeExperiencia,
-                horasDeTrabajo,
                 estado : 'Activo',
                 sucursal : {
                     id : sucursalId
                 },
                 responsabilidades,
                 sueldo,
-                transacciones : null,
                 estiloDeClientesAsignados,
                 objetivosDeVentas,
-                departamento
+                departamento,
             }
-            console.log('Nuevo ejecutivo:', newEjecutivo);
-            await EjecutivoService.create(newEjecutivo, token);
-            setPassword('');
+            console.log('Ejecutivo update:', editEjecutivo);
+            await EjecutivoService.update(ejecutivo.id, editEjecutivo, token);
+            alert('Ejecutivo editado exitosamente');
             setNombre('');
             setApellidoPaterno('');
             setApellidoMaterno('');
@@ -97,7 +113,7 @@ export const AgregarEjecutivoModal = ({ isVisible, onClose, onAddSuccess }) => {
             setDiscapacidad(false);
             setEstadoCivil('');
             setNivelDeEstudios('');
-            setFechaContratacion(obtenerFechaActual());
+            setFechaContratacion('');
             setTurno('');
             setAniosDeExperiencia('');
             setSucursalId('');
@@ -106,16 +122,17 @@ export const AgregarEjecutivoModal = ({ isVisible, onClose, onAddSuccess }) => {
             setEstiloDeClientesAsignados('');
             setObjetivosDeVentas('');
             setDepartamento('');
-            onAddSuccess();
+            onEditSuccess();
             onClose();
         } catch (error) {
-            console.error('Error adding ejecutivo:', error);
-            alert('Error al agregar ejecutivo');
+            console.error('Error editing ejecutivo:', error);
+            alert('Error al editar al ejecutivo');
         }
     }
-
+    
+    
     if (!isVisible) return null;
-
+    
     return (
         <>
             <div
@@ -128,7 +145,7 @@ export const AgregarEjecutivoModal = ({ isVisible, onClose, onAddSuccess }) => {
                     <div className="relative bg-white rounded-lg shadow dark:bg-gray-700">
                         <div className="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
                             <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-                            Agregar Ejecutivo
+                            Editar Ejecutivo
                             </h3>
                             <button
                             type="button"
@@ -153,26 +170,8 @@ export const AgregarEjecutivoModal = ({ isVisible, onClose, onAddSuccess }) => {
                             <span className="sr-only">Close modal</span>
                             </button>
                         </div>
-                        <form onSubmit={handleSubmit} className="p-4 md:p-5">
+                        <form onSubmit={handleEditEjecutivo} className="p-4 md:p-5">
                         <div className="grid gap-4 mb-4 grid-cols-2">
-                            <div className="col-span-2">
-                                <label
-                                htmlFor="password"
-                                className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                                >
-                                Password
-                                </label>
-                                <input
-                                type="password"
-                                name="password"
-                                id="password"
-                                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                                placeholder="Contraseña del Ejecutivo"
-                                value={password}
-                                onChange={(e) => setPassword(e.target.value)}
-                                required
-                                />
-                            </div>
                             <div className="col-span-2 sm:col-span-1">
                                 <label
                                 htmlFor="nombre"

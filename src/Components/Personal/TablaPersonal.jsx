@@ -6,6 +6,7 @@ import CajeroService from '../../service/CajeroService';
 import ClienteService from '../../service/ClienteService';
 import { EditarClienteModal } from '../Cliente/EditarClienteModal';
 import ModalDelete from '../Sucursales/ModalDelete';
+import { EditarEjecutivoModal } from '../Ejecutivo/EditarEjecutivoModal';
 
 export const TablaPersonal = ({
   personal,
@@ -16,21 +17,35 @@ export const TablaPersonal = ({
   vista
 }) => {
   const [selectedPersona, setSelectedPersona] = useState(null);
-  const [isEditModalVisible, setIsEditModalVisible] = useState(false);
+  const [isSelectedPersona, setIsSelectedPersona] = useState(false);
+  const [isEditModalVisibleCliente, setIsEditModalVisibleCliente] = useState(false);
+  const [isEditModalVisibleEjecutivo, setIsEditModalVisibleEjecutivo] = useState(false);
   const [isDeleteModalVisible, setIsDeleteModalVisible] = useState(false);
   const [clienteToDelete, setClienteToDelete] = useState(null);
 
   const handleActualizarCliente = async (persona) => {
     try {
-        console.log('Persona seleccionada para actualizar:', persona);
+        console.log('Cliente seleccionado para actualizar:', persona);
         const cliente = await ClienteService.getById(persona.id, token);
         console.log('Cliente recibido del servicio:', cliente);
         setSelectedPersona(cliente);
-        setIsEditModalVisible(true);
+        setIsEditModalVisibleCliente(true);
     } catch (error) {
         console.error('Error fetching cliente:', error);
     }
   };
+
+  const handleActualizarEjecutivo = async (persona) => {
+    try {
+      console.log('Ejecutivo seleccionado para actualizar:', persona); 
+      const ejecutivo = await EjecutivoService.getById(persona.id, token);
+      console.log('Ejecutivo recibido del servicio:', ejecutivo);
+      setSelectedPersona(ejecutivo);
+      setIsEditModalVisibleEjecutivo(true); 
+    } catch (error) {
+      console.error('Error fetching ejecutivo:', error);
+    }
+  }
 
   const handleDeleteCliente = async () => {
     try {
@@ -43,24 +58,39 @@ export const TablaPersonal = ({
     }
   }
 
+  const handleDeleteEjecutivo = async () => {
+    try {
+      await EjecutivoService.deleteEjecutivo(clienteToDelete, token);
+      onDeleteSuccess(); // Asegúrate de llamar a onDeleteSuccess aquí
+      setIsDeleteModalVisible(false);
+      setClienteToDelete(null);
+    } catch (error) {
+      console.error('Error deleting ejecutivo:', error);
+    }
+  }
+
   const handleRowClick = async (id) => {
     try {
       if (userRole === 'ROLE_ADMIN') {
         const persona = await PersonalService.getById(id, token);
         setSelectedPersona(persona);
+        setIsSelectedPersona(true);
       } 
-
+      
       if (userRole === 'ROLE_GERENTE') {
         if (vista === 'Ejecutivo') {
           const persona = await EjecutivoService.getById(id, token);
           setSelectedPersona(persona);
+          setIsSelectedPersona(true);
         } else if (vista === 'Cajero') {
           const persona = await CajeroService.getById(id, token);
           setSelectedPersona(persona);
+          setIsSelectedPersona(true);
         } else if (vista === 'Cliente') {
           const persona = await ClienteService.getById(id, token);
           console.log(persona);
           setSelectedPersona(persona); 
+          setIsSelectedPersona(true);
         }
       }
 
@@ -70,12 +100,18 @@ export const TablaPersonal = ({
   };
 
   const handleCloseModal = () => {
-    setIsEditModalVisible(false);
+    setIsEditModalVisibleCliente(false);
+    setIsEditModalVisibleEjecutivo(false);
     setSelectedPersona(null);
   };
 
   const handleOpenDeleteModal = (id) => {
-    setClienteToDelete(id);
+    if (vista === 'Cliente') {
+      setClienteToDelete(id);
+    }
+    if (vista === 'Ejecutivo') {
+      setClienteToDelete(id);
+    }
     setIsDeleteModalVisible(true);
   };
 
@@ -101,6 +137,7 @@ export const TablaPersonal = ({
                 <th className="py-2">Responsabilidades</th>
               </>
             }
+            <th>Ver</th>
             {userRole === 'ROLE_GERENTE' && (
               <>
                 <th className="py-2">Eliminar</th>
@@ -111,48 +148,59 @@ export const TablaPersonal = ({
         </thead>
         <tbody>
           {personal.map((persona) => (
-            <tr key={persona.id} onClick={() => handleRowClick(persona.id)} className="cursor-pointer">
-              <td>{`${persona.nombre} ${persona.apellidoPaterno} ${persona.apellidoMaterno}`}</td>
-              <td>{persona.fechaNacimiento}</td>
-              <td>{persona.telefono}</td>
-              <td>{persona.email}</td>
-              <td>{persona.rfc}</td>
-              <td>{persona.nivelDeEstudios}</td>
+            <tr key={persona.id}>
+              <td className='text-sm'>{`${persona.nombre} ${persona.apellidoPaterno} ${persona.apellidoMaterno}`}</td>
+              <td className='text-sm'>{persona.fechaNacimiento}</td>
+              <td className='text-sm'>{persona.telefono}</td>
+              <td className='text-sm'>{persona.email}</td>
+              <td className='text-sm'>{persona.rfc}</td>
+              <td className='text-sm'>{persona.nivelDeEstudios}</td>
               {vista !== 'Cliente' && 
                 <>
-                  <td>{persona.fechaContratacion}</td>
-                  <td>{persona.responsabilidades}</td>
+                  <td className='text-sm'>{persona.fechaContratacion}</td>
+                  <td className='text-sm'>{persona.responsabilidades}</td>
                 </>
               }
+              <td 
+                onClick={() => handleRowClick(persona.id)} 
+                className="text-center"
+                style={{cursor: 'pointer'}}
+              >
+                <i className="fa-solid fa-eye"></i>
+              </td>
               {userRole === 'ROLE_GERENTE' && (
                 <>
-                  <td>
-                    <button 
+                  <td className='text-sm' style={{textAlign : 'center'}}>
+                    <button
                     className="btnEliminar" 
                     type="button"
-                    onClick={(e) => {
-                      e.stopPropagation();
+                    onClick={() => {
                       if (vista === 'Cliente') {
                         handleOpenDeleteModal(persona.id);
                       }
-                    }} 
+                      if (vista === 'Ejecutivo') {
+                        handleOpenDeleteModal(persona.id);
+                      }
+                    }}
                     >
-                      Eliminar
+                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M135.2 17.7L128 32 32 32C14.3 32 0 46.3 0 64S14.3 96 32 96l384 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-96 0-7.2-14.3C307.4 6.8 296.3 0 284.2 0L163.8 0c-12.1 0-23.2 6.8-28.6 17.7zM416 128L32 128 53.2 467c1.6 25.3 22.6 45 47.9 45l245.8 0c25.3 0 46.3-19.7 47.9-45L416 128z"/></svg>
                     </button>
                   </td>
-                  <td>
+                  <td className='text-sm' style={{textAlign : 'center'}}>
                     <button
                       className="btnActualizar"
                       type="button"
-                      onClick={(e) =>  {
-                        e.stopPropagation();
+                      onClick={() =>  {
                         if (vista === 'Cliente') {
                           handleActualizarCliente(persona)
+                        }
+                        if (vista === 'Ejecutivo') {
+                          handleActualizarEjecutivo(persona)
                         }
                       }
                       } 
                     >
-                      Actualizar
+                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M362.7 19.3L314.3 67.7 444.3 197.7l48.4-48.4c25-25 25-65.5 0-90.5L453.3 19.3c-25-25-65.5-25-90.5 0zm-71 71L58.6 323.5c-10.4 10.4-18 23.3-22.2 37.4L1 481.2C-1.5 489.7 .8 498.8 7 505s15.3 8.5 23.7 6.1l120.3-35.4c14.1-4.2 27-11.8 37.4-22.2L421.7 220.3 291.7 90.3z"/></svg>
                     </button>
                   </td>
                 </>
@@ -162,12 +210,13 @@ export const TablaPersonal = ({
         </tbody>
       </table>
 
-      <PersonalSelectedModal persona={selectedPersona} onClose={handleCloseModal} vista={vista}/>
-      <EditarClienteModal isVisible={isEditModalVisible} onClose={handleCloseModal} cliente={selectedPersona} onEditSuccess={onEditSuccess} token={token} />
+      <PersonalSelectedModal isVisible={isSelectedPersona} persona={selectedPersona} onClose={handleCloseModal} vista={vista}/>
+      <EditarClienteModal isVisible={isEditModalVisibleCliente} onClose={handleCloseModal} cliente={selectedPersona} onEditSuccess={onEditSuccess} token={token} />
+      <EditarEjecutivoModal isVisible={isEditModalVisibleEjecutivo} onClose={handleCloseModal} ejecutivo={selectedPersona} onEditSuccess={onEditSuccess} token={token} />
       <ModalDelete 
         isVisible={isDeleteModalVisible} 
         onClose={handleCloseDeleteModal} 
-        onConfirm={handleDeleteCliente} 
+        onConfirm={vista === 'Cliente' ? handleDeleteCliente : handleDeleteEjecutivo}
       />
     </main>
   );

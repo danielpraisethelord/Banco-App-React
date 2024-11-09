@@ -46,7 +46,14 @@ export const Sucursales = () => {
         <>
             <NavBar />
             <div className="containerBtn">
-                <button className="btnAgregar" onClick={handleAgregarSucursal}>Agregar Sucursal</button>
+                <button 
+                    className="btnAgregar" 
+                    onClick={handleAgregarSucursal}
+                    style={{fontSize : '20px', borderRadius : '10px', marginTop : '20px'}}
+                >
+                    <i class="fa-regular fa-building" style={{marginRight : '8px', fontSize : '30px'}}></i>
+                    Agregar Sucursal
+                </button>
             </div>
             <TablaSucursales sucursales={sucursales} token={token} onDeleteSuccess={handleDeleteSuccess} onEditSuccess={handleEditSuccess} />
             <AgregarSucursalModal isVisible={isModalVisible} onClose={handleCloseModal} onAddSuccess={fetchSucursales} />

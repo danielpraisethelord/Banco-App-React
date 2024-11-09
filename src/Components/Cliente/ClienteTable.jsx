@@ -25,7 +25,14 @@ export const ClienteTable = () => {
         <>
             <NavBar />
             <div className="containerBtn">
-                <button className="btnAgregar" onClick={handleAgregarCliente} >Agregar Cliente</button>
+                <button 
+                    className="btnAgregar" 
+                    onClick={handleAgregarCliente}
+                    style={{fontSize : '20px', borderRadius : '10px', marginTop : '20px'}}
+                >
+                    <i className="fa-regular fa-address-book" style={{marginRight : '8px', fontSize : '30px'}}></i>
+                    Agregar Cliente
+                </button>
             </div>
             <Personal token={token} userRole={userRole} vista={'Cliente'} reload={reload} />
             <AgregarClienteModal isVisible={isModalVisible} onClose={handleCloseModal} onAddSuccess={fetchClientes} />

@@ -1,8 +1,9 @@
 import React from 'react';
 
-const PersonalSelectedModal = ({ persona, onClose, vista }) => {
+const PersonalSelectedModal = ({ isVisible, persona, onClose, vista }) => {
   if (!persona) return null;
 
+  if (!isVisible) return null;
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center w-full h-full bg-black bg-opacity-50">
       <div className="relative p-3 w-full max-w-2xl max-h-[80vh] bg-white rounded-lg shadow dark:bg-gray-700 overflow-y-auto">
@@ -90,15 +91,7 @@ const PersonalSelectedModal = ({ persona, onClose, vista }) => {
             <strong>Estado:</strong> {persona.estado}
           </p>
           <p className="leading-relaxed text-gray-500 dark:text-gray-400">
-            {vista === 'Cliente' ? (
-              <>
-                <strong>Sucursal ID:</strong> {persona.idSucursal}
-              </>
-            ) : (
-              <>
-                <strong>Sucursal ID:</strong> {persona.sucursal.id}
-              </>
-            )}
+            <strong>Sucursal ID:</strong> {persona.sucursal.id}
           </p>
           {vista !== 'Cliente' && (
             <>  
