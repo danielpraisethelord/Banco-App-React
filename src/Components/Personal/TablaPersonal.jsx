@@ -7,6 +7,7 @@ import ClienteService from '../../service/ClienteService';
 import { EditarClienteModal } from '../Cliente/EditarClienteModal';
 import ModalDelete from '../Sucursales/ModalDelete';
 import { EditarEjecutivoModal } from '../Ejecutivo/EditarEjecutivoModal';
+import { EditarCajeroModal } from '../Cajero/EditarCajeroModal';
 
 export const TablaPersonal = ({
   personal,
@@ -20,6 +21,7 @@ export const TablaPersonal = ({
   const [isSelectedPersona, setIsSelectedPersona] = useState(false);
   const [isEditModalVisibleCliente, setIsEditModalVisibleCliente] = useState(false);
   const [isEditModalVisibleEjecutivo, setIsEditModalVisibleEjecutivo] = useState(false);
+  const [isEditModalVisibleCajero, setIsEditModalVisibleCajero] = useState(false);
   const [isDeleteModalVisible, setIsDeleteModalVisible] = useState(false);
   const [clienteToDelete, setClienteToDelete] = useState(null);
 
@@ -47,6 +49,18 @@ export const TablaPersonal = ({
     }
   }
 
+  const handleActualizarCajero = async (persona) => {
+    try {
+      console.log('Cajero seleccionado para actualizar:', persona);
+      const cajero = await CajeroService.getById(persona.id, token);
+      console.log('Cajero recibido del servicio:', cajero);
+      setSelectedPersona(cajero);
+      setIsEditModalVisibleCajero(true);
+    } catch (error) {
+      console.error('Error fetching cajero:', error);
+    }
+  }
+
   const handleDeleteCliente = async () => {
     try {
       await ClienteService.deleteCliente(clienteToDelete, token);
@@ -66,6 +80,17 @@ export const TablaPersonal = ({
       setClienteToDelete(null);
     } catch (error) {
       console.error('Error deleting ejecutivo:', error);
+    }
+  }
+
+  const handleDeleteCajero = async () => {
+    try {
+      await CajeroService.deleteCajero(clienteToDelete, token);
+      onDeleteSuccess(); // Asegúrate de llamar a onDeleteSuccess aquí
+      setIsDeleteModalVisible(false);
+      setClienteToDelete(null);
+    } catch (error) {
+      console.error('Error deleting cajero:', error);
     }
   }
 
@@ -102,6 +127,7 @@ export const TablaPersonal = ({
   const handleCloseModal = () => {
     setIsEditModalVisibleCliente(false);
     setIsEditModalVisibleEjecutivo(false);
+    setIsEditModalVisibleCajero(false);
     setSelectedPersona(null);
   };
 
@@ -110,6 +136,9 @@ export const TablaPersonal = ({
       setClienteToDelete(id);
     }
     if (vista === 'Ejecutivo') {
+      setClienteToDelete(id);
+    }
+    if (vista === 'Cajero') {
       setClienteToDelete(id);
     }
     setIsDeleteModalVisible(true);
@@ -181,6 +210,9 @@ export const TablaPersonal = ({
                       if (vista === 'Ejecutivo') {
                         handleOpenDeleteModal(persona.id);
                       }
+                      if (vista === 'Cajero') {
+                        handleOpenDeleteModal(persona.id);
+                      }
                     }}
                     >
                       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M135.2 17.7L128 32 32 32C14.3 32 0 46.3 0 64S14.3 96 32 96l384 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-96 0-7.2-14.3C307.4 6.8 296.3 0 284.2 0L163.8 0c-12.1 0-23.2 6.8-28.6 17.7zM416 128L32 128 53.2 467c1.6 25.3 22.6 45 47.9 45l245.8 0c25.3 0 46.3-19.7 47.9-45L416 128z"/></svg>
@@ -196,6 +228,9 @@ export const TablaPersonal = ({
                         }
                         if (vista === 'Ejecutivo') {
                           handleActualizarEjecutivo(persona)
+                        }
+                        if (vista === 'Cajero') {
+                          handleActualizarCajero(persona)
                         }
                       }
                       } 
@@ -213,10 +248,11 @@ export const TablaPersonal = ({
       <PersonalSelectedModal isVisible={isSelectedPersona} persona={selectedPersona} onClose={handleCloseModal} vista={vista}/>
       <EditarClienteModal isVisible={isEditModalVisibleCliente} onClose={handleCloseModal} cliente={selectedPersona} onEditSuccess={onEditSuccess} token={token} />
       <EditarEjecutivoModal isVisible={isEditModalVisibleEjecutivo} onClose={handleCloseModal} ejecutivo={selectedPersona} onEditSuccess={onEditSuccess} token={token} />
+      <EditarCajeroModal isVisible={isEditModalVisibleCajero} onClose={handleCloseModal} cajero={selectedPersona} onEditSuccess={onEditSuccess} token={token} />
       <ModalDelete 
         isVisible={isDeleteModalVisible} 
         onClose={handleCloseDeleteModal} 
-        onConfirm={vista === 'Cliente' ? handleDeleteCliente : handleDeleteEjecutivo}
+        onConfirm={vista === 'Cliente' ? handleDeleteCliente : vista === 'Ejecutivo' ? handleDeleteEjecutivo : handleDeleteCajero}
       />
     </main>
   );

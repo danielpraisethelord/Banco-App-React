@@ -4,7 +4,7 @@ import Login from './Components/Login/Login';
 import { Bienvenida } from './Components/Bienvenida/Bienvenida';
 import { Sucursales } from './Components/Sucursales/Sucursales';
 import './index.css';
-import { PersonalCajero } from './Components/Personal/PersonalCajero';
+import { PersonalCajero } from './Components/Cajero/PersonalCajero';
 import { ClienteTable } from './Components/Cliente/ClienteTable';
 import { PersonalAdmin } from './Components/Personal/PersonalAdmin';
 import { NotFound404 } from './Components/404/NotFound404';
