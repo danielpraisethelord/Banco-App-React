@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
-import SucursalService from '../../service/SucursalService';
-import EjecutivoService from "../../service/EjecutivoService";
+import SucursalService from "../../service/SucursalService";
+import CajeroService from "../../service/CajeroService";
 
-export const EditarEjecutivoModal = ({ isVisible, onClose, onEditSuccess, ejecutivo }) => {
+export const EditarCajeroModal = ({ isVisible, onClose, onEditSuccess, cajero }) => {
     const [nombre, setNombre] = useState('');
     const [apellidoPaterno, setApellidoPaterno] = useState('');
     const [apellidoMaterno, setApellidoMaterno] = useState('');
@@ -18,42 +18,38 @@ export const EditarEjecutivoModal = ({ isVisible, onClose, onEditSuccess, ejecut
     const [fechaContratacion, setFechaContratacion] = useState('');
     const [turno, setTurno] = useState('');
     const [aniosDeExperiencia, setAniosDeExperiencia] = useState('');
-    const [sucursalId, setSucursalId] = useState(ejecutivo?.sucursal?.id || "");
+    const [sucursalId, setSucursalId] = useState(cajero?.sucursal?.id || '');
     const [responsabilidades, setResponsabilidades] = useState('');
     const [sueldo, setSueldo] = useState('');
-    const [estiloDeClientesAsignados, setEstiloDeClientesAsignados] = useState('');
-    const [objetivosDeVentas, setObjetivosDeVentas] = useState('');
-    const [departamento, setDepartamento] = useState('');
+    const [cajaAsignada, setCajaAsignada] = useState('');
     const [sucursales, setSucursales] = useState([]);
     const token = localStorage.getItem('token');
-    
+
     useEffect(() => {
-        if (ejecutivo) {
-            console.log(ejecutivo);
-            setNombre(ejecutivo.nombre);
-            setApellidoPaterno(ejecutivo.apellidoPaterno);
-            setApellidoMaterno(ejecutivo.apellidoMaterno);
-            setFechaNacimiento(ejecutivo.fechaNacimiento);
-            setGenero(ejecutivo.genero);
-            setTelefono(ejecutivo.telefono);
-            setEmail(ejecutivo.email);
-            setDireccion(ejecutivo.direccion);
-            setRfc(ejecutivo.rfc);
-            setDiscapacidad(ejecutivo.discapacidad);
-            setEstadoCivil(ejecutivo.estadoCivil);
-            setNivelDeEstudios(ejecutivo.nivelDeEstudios);
-            setFechaContratacion(ejecutivo.fechaContratacion);
-            setTurno(ejecutivo.turno);
-            setAniosDeExperiencia(ejecutivo.aniosDeExperiencia);
-            setResponsabilidades(ejecutivo.responsabilidades);
-            setSueldo(ejecutivo.sueldo);
-            setEstiloDeClientesAsignados(ejecutivo.estiloDeClientesAsignados);
-            setObjetivosDeVentas(ejecutivo.objetivosDeVentas);
-            setDepartamento(ejecutivo.departamento);
-            setSucursalId(ejecutivo.sucursal.id);
+        if (cajero) {
+            console.log(cajero);
+            setNombre(cajero.nombre);
+            setApellidoPaterno(cajero.apellidoPaterno);
+            setApellidoMaterno(cajero.apellidoMaterno);
+            setFechaNacimiento(cajero.fechaNacimiento);
+            setGenero(cajero.genero);
+            setTelefono(cajero.telefono);
+            setEmail(cajero.email);
+            setDireccion(cajero.direccion);
+            setRfc(cajero.rfc);
+            setDiscapacidad(cajero.discapacidad);
+            setEstadoCivil(cajero.estadoCivil);
+            setNivelDeEstudios(cajero.nivelDeEstudios);
+            setFechaContratacion(cajero.fechaContratacion);
+            setTurno(cajero.turno);
+            setAniosDeExperiencia(cajero.aniosDeExperiencia);
+            setSucursalId(cajero.sucursal.id);
+            setResponsabilidades(cajero.responsabilidades);
+            setSueldo(cajero.sueldo);
+            setCajaAsignada(cajero.cajaAsignada);
         }
-    }, [ejecutivo]);
-    
+    }, [cajero]);
+
     useEffect(() => {
         const fetchSucursales = async () => {
             try {
@@ -68,11 +64,11 @@ export const EditarEjecutivoModal = ({ isVisible, onClose, onEditSuccess, ejecut
         fetchSucursales();
     }, []);
 
-    const handleEditEjecutivo = async (e) => {
+    const handleEditCajero = async (e) => {
         e.preventDefault();
         try {
             const horasDeTrabajo = turno === 'Completo' ? 8 : 4;
-            const editEjecutivo = {
+            const editCajero = {
                 nombre,
                 apellidoPaterno,
                 apellidoMaterno,
@@ -91,17 +87,15 @@ export const EditarEjecutivoModal = ({ isVisible, onClose, onEditSuccess, ejecut
                 horasDeTrabajo,
                 estado : 'Activo',
                 sucursal : {
-                    id : sucursalId
+                    id: sucursalId
                 },
                 responsabilidades,
                 sueldo,
-                estiloDeClientesAsignados,
-                objetivosDeVentas,
-                departamento,
+                cajaAsignada
             }
-            console.log('Ejecutivo update:', editEjecutivo);
-            await EjecutivoService.update(ejecutivo.id, editEjecutivo, token);
-            alert('Ejecutivo editado exitosamente');
+            console.log('Cajero editado:', editCajero);
+            await CajeroService.update(cajero.id, editCajero, token);
+            alert('Cajero editado correctamente');
             setNombre('');
             setApellidoPaterno('');
             setApellidoMaterno('');
@@ -120,20 +114,17 @@ export const EditarEjecutivoModal = ({ isVisible, onClose, onEditSuccess, ejecut
             setSucursalId('');
             setResponsabilidades('');
             setSueldo('');
-            setEstiloDeClientesAsignados('');
-            setObjetivosDeVentas('');
-            setDepartamento('');
+            setCajaAsignada('');
             onEditSuccess();
             onClose();
         } catch (error) {
-            console.error('Error editing ejecutivo:', error);
-            alert('Error al editar al ejecutivo');
+            console.error('Error editing cajero:', error);
+            alert('Error al editar el cajero');
         }
     }
-    
-    
+
     if (!isVisible) return null;
-    
+
     return (
         <>
             <div
@@ -146,7 +137,7 @@ export const EditarEjecutivoModal = ({ isVisible, onClose, onEditSuccess, ejecut
                     <div className="relative bg-white rounded-lg shadow dark:bg-gray-700">
                         <div className="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
                             <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-                            Editar Ejecutivo
+                            Editar Cajero
                             </h3>
                             <button
                             type="button"
@@ -171,7 +162,7 @@ export const EditarEjecutivoModal = ({ isVisible, onClose, onEditSuccess, ejecut
                             <span className="sr-only">Close modal</span>
                             </button>
                         </div>
-                        <form onSubmit={handleEditEjecutivo} className="p-4 md:p-5">
+                        <form onSubmit={handleEditCajero} className="p-4 md:p-5">
                         <div className="grid gap-4 mb-4 grid-cols-2">
                             <div className="col-span-2 sm:col-span-1">
                                 <label
@@ -185,7 +176,7 @@ export const EditarEjecutivoModal = ({ isVisible, onClose, onEditSuccess, ejecut
                                 name="nombre"
                                 id="nombre"
                                 className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                                placeholder="Nombre del ejecutivo"
+                                placeholder="Nombre del cajero"
                                 value={nombre}
                                 onChange={(e) => setNombre(e.target.value)}
                                 required
@@ -203,7 +194,7 @@ export const EditarEjecutivoModal = ({ isVisible, onClose, onEditSuccess, ejecut
                                 name="apellidoPaterno"
                                 id="apellidoPaterno"
                                 className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                                placeholder="Apellido paterno del ejecutivo"
+                                placeholder="Apellido paterno del cajero"
                                 value={apellidoPaterno}
                                 onChange={(e) => setApellidoPaterno(e.target.value)}
                                 required
@@ -221,7 +212,7 @@ export const EditarEjecutivoModal = ({ isVisible, onClose, onEditSuccess, ejecut
                                 name="apellidoMaterno"
                                 id="apellidoMaterno"
                                 className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                                placeholder="Apellido materno del ejecutivo"
+                                placeholder="Apellido materno del cajero"
                                 value={apellidoMaterno}
                                 onChange={(e) => setApellidoMaterno(e.target.value)}
                                 required
@@ -239,7 +230,7 @@ export const EditarEjecutivoModal = ({ isVisible, onClose, onEditSuccess, ejecut
                                 name="fechaNacimiento"
                                 id="fechaNacimiento"
                                 className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                                placeholder="Apellido materno del ejecutivo"
+                                placeholder="Apellido materno del cajero"
                                 value={fechaNacimiento}
                                 onChange={(e) => setFechaNacimiento(e.target.value)}
                                 required
@@ -277,7 +268,7 @@ export const EditarEjecutivoModal = ({ isVisible, onClose, onEditSuccess, ejecut
                                     name="telefono"
                                     id="telefono"
                                     className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                                    placeholder="Teléfono del ejecutivo"
+                                    placeholder="Teléfono del cajero"
                                     value={telefono}
                                     onChange={(e) => setTelefono(e.target.value)}
                                     onInput={(e) => e.target.value = e.target.value.replace(/[^0-9+#\- ]/g, '')}
@@ -296,7 +287,7 @@ export const EditarEjecutivoModal = ({ isVisible, onClose, onEditSuccess, ejecut
                                     name="email"
                                     id="email"
                                     className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                                    placeholder="Email del ejecutivo"
+                                    placeholder="Email del cajero"
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
                                     required
@@ -315,7 +306,7 @@ export const EditarEjecutivoModal = ({ isVisible, onClose, onEditSuccess, ejecut
                                     name="direccion"
                                     id="direccion"
                                     className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                                    placeholder="Dirección del ejecutivo"
+                                    placeholder="Dirección del cajero"
                                     value={direccion}
                                     onChange={(e) => setDireccion(e.target.value)}
                                     required
@@ -334,7 +325,7 @@ export const EditarEjecutivoModal = ({ isVisible, onClose, onEditSuccess, ejecut
                                     name="rfc"
                                     id="rfc"
                                     className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                                    placeholder="RFC del ejecutivo"
+                                    placeholder="RFC del cajero"
                                     value={rfc}
                                     onChange={(e) => setRfc(e.target.value)}
                                     required
@@ -373,7 +364,7 @@ export const EditarEjecutivoModal = ({ isVisible, onClose, onEditSuccess, ejecut
                                     name="estadoCivil"
                                     id="estadoCivil"
                                     className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                                    placeholder="Estado Civil del ejecutivo"
+                                    placeholder="Estado Civil del cajero"
                                     value={estadoCivil}
                                     onChange={(e) => setEstadoCivil(e.target.value)}
                                     required
@@ -392,7 +383,7 @@ export const EditarEjecutivoModal = ({ isVisible, onClose, onEditSuccess, ejecut
                                     name="nivelDeEstudios"
                                     id="nivelDeEstudios"
                                     className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                                    placeholder="Nivel de Estudios del ejecutivo"
+                                    placeholder="Nivel de Estudios del cajero"
                                     value={nivelDeEstudios}
                                     onChange={(e) => setNivelDeEstudios(e.target.value)}
                                     required
@@ -411,7 +402,7 @@ export const EditarEjecutivoModal = ({ isVisible, onClose, onEditSuccess, ejecut
                                     name="fechaContratacion"
                                     id="fechaContratacion"
                                     className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                                    placeholder="Nivel de Estudios del ejecutivo"
+                                    placeholder="Nivel de Estudios del cajero"
                                     value={fechaContratacion}
                                     onChange={(e) => setFechaContratacion(e.target.value)}
                                     required
@@ -454,7 +445,7 @@ export const EditarEjecutivoModal = ({ isVisible, onClose, onEditSuccess, ejecut
                                     name="aniosDeExperiencia"
                                     id="aniosDeExperiencia"
                                     className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                                    placeholder="Años de experiencia del ejecutivo"
+                                    placeholder="Años de experiencia del cajero"
                                     value={aniosDeExperiencia}
                                     onChange={(e) => setAniosDeExperiencia(e.target.value)}
                                     required
@@ -499,7 +490,7 @@ export const EditarEjecutivoModal = ({ isVisible, onClose, onEditSuccess, ejecut
                                     name="responsabilidades"
                                     id="responsabilidades"
                                     className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                                    placeholder="Responsabilidad del ejecutivo"
+                                    placeholder="Responsabilidad del cajero"
                                     value={responsabilidades}
                                     onChange={(e) => setResponsabilidades(e.target.value)}
                                     required
@@ -519,7 +510,7 @@ export const EditarEjecutivoModal = ({ isVisible, onClose, onEditSuccess, ejecut
                                     name="sueldo"
                                     id="sueldo"
                                     className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                                    placeholder="Sueldo del ejecutivo"
+                                    placeholder="Sueldo del cajero"
                                     value={sueldo}
                                     onChange={(e) => setSueldo(e.target.value)}
                                     required
@@ -528,71 +519,23 @@ export const EditarEjecutivoModal = ({ isVisible, onClose, onEditSuccess, ejecut
 
                             <div className="col-span-2 sm:col-span-1">
                                 <label
-                                    htmlFor="estiloDeClientesAsignados"
+                                    htmlFor="cajaAsignada"
                                     className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                                 >
-                                    Estilo de Clientes Asignados
-                                </label>
-                                <select
-                                    name="estiloDeClientesAsignados"
-                                    id="estiloDeClientesAsignados"
-                                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                                    value={estiloDeClientesAsignados}
-                                    onChange={(e) => setEstiloDeClientesAsignados(e.target.value)}
-                                    required
-                                >
-                                    <option value="" disabled hidden>Seleccione un tipo de cliente</option>
-                                    <option value="corporativo">Corporativo</option>
-                                    <option value="individual">Individual</option>
-                                    <option value="pyme">PYME</option>
-                                    <option value="vip">VIP</option>
-                                    <option value="internacional">Internacional</option>
-                                </select>
-                            </div>
-
-                            <div className="col-span-2 sm:col-span-1">
-                                <label
-                                    htmlFor="objetivosDeVentas"
-                                    className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                                >
-                                    Objetivos de Ventas
+                                    Caja Asignada
                                 </label>
                                 <input
-                                    type="text"
-                                    name="objetivosDeVentas"
-                                    id="objetivosDeVentas"
+                                    type="number"
+                                    name="cajaAsignada"
+                                    id="cajaAsignada"
                                     className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                                    placeholder="Objetivo de ventas del ejecutivo"
-                                    value={objetivosDeVentas}
-                                    onChange={(e) => setObjetivosDeVentas(e.target.value)}
+                                    placeholder="Caja asignada al cajero"
+                                    value={cajaAsignada}
+                                    onChange={(e) => setCajaAsignada(e.target.value)}
                                     required
                                 />
                             </div>
-                            
-                            <div className="col-span-2 sm:col-span-1">
-                                <label
-                                    htmlFor="departamento"
-                                    className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                                >
-                                    Departamento
-                                </label>
-                                <select
-                                    name="departamento"
-                                    id="departamento"
-                                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                                    value={departamento}
-                                    onChange={(e) => setDepartamento(e.target.value)}
-                                    required
-                                >
-                                    <option value="" disabled hidden>Seleccione un departamento</option>
-                                    <option value="finanzas">Finanzas</option>
-                                    <option value="marketing">Marketing</option>
-                                    <option value="ventas">Ventas</option>
-                                    <option value="recursos-humanos">Recursos Humanos</option>
-                                    <option value="tecnologia">Tecnología</option>
-                                    <option value="atencion-al-cliente">Atención al Cliente</option>
-                                </select>
-                            </div>
+
 
                         </div>
                         <div className="flex justify-end">
