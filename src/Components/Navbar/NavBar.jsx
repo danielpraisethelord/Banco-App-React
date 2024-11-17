@@ -67,6 +67,22 @@ export const NavBar = () => {
                             <li><Link to="/clientes">Clientes</Link></li>
                         </>
                     )}
+                    {userRole === 'ROLE_EJECUTIVO' && (
+                        <>
+                            <li><Link to="/clientes">Clientes</Link></li>
+                            <li><Link to="/crear-tarjeta">Crear Tarjeta</Link></li>
+                        </>
+                    )}
+                    {userRole === 'ROLE_CLIENTE' && (
+                        <>
+                            <li><Link to="/cuenta-details">Cuenta</Link> </li>
+                            <li><Link to="/depositar">Depositar</Link> </li>
+                            <li><Link to="/retirar">Retirar</Link> </li>
+                            <li><Link to="/transferir">Transferir</Link> </li>
+                            <li><Link to="/pagar-tarjeta">Pagar</Link> </li>
+                            <li><Link to="simular-compra">Simular Compra</Link> </li>
+                        </>
+                    )}
                 </ul>
             </nav>
             {userRole ? (

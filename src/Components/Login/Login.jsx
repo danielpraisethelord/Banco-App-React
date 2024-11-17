@@ -26,6 +26,7 @@ const Login = () => {
       console.log('User role:', userRole);
 
       localStorage.setItem('role', userRole);
+      localStorage.setItem('rfc', decodedToken.username);
 
       navigate('/');
     } catch (error) {

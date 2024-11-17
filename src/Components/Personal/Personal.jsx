@@ -22,7 +22,7 @@ const Personal = ({ token, userRole, vista, reload }) => {
       }
     }
 
-    if (token && userRole === 'ROLE_GERENTE') {
+    if (token && (userRole === 'ROLE_GERENTE' || userRole === 'ROLE_EJECUTIVO')) {
       try {
         if (vista === 'Ejecutivo') {
           const data = await EjecutivoService.getAll(token);
