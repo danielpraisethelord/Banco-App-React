@@ -102,7 +102,7 @@ export const TablaPersonal = ({
         setIsSelectedPersona(true);
       } 
       
-      if (userRole === 'ROLE_GERENTE') {
+      if (userRole === 'ROLE_GERENTE' || userRole === 'ROLE_EJECUTIVO') {
         if (vista === 'Ejecutivo') {
           const persona = await EjecutivoService.getById(id, token);
           setSelectedPersona(persona);
@@ -167,7 +167,7 @@ export const TablaPersonal = ({
               </>
             }
             <th>Ver</th>
-            {userRole === 'ROLE_GERENTE' && (
+            {(userRole === 'ROLE_GERENTE' || userRole === 'ROLE_EJECUTIVO' && vista === 'Cliente') && (
               <>
                 <th className="py-2">Eliminar</th>
                 <th className="py-2">Actualizar</th>
@@ -197,7 +197,7 @@ export const TablaPersonal = ({
               >
                 <i className="fa-solid fa-eye"></i>
               </td>
-              {userRole === 'ROLE_GERENTE' && (
+              {(userRole === 'ROLE_GERENTE' || userRole === 'ROLE_EJECUTIVO') && (
                 <>
                   <td className='text-sm' style={{textAlign : 'center'}}>
                     <button
