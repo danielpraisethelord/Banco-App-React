@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = 'http://localhost:8081/api/ejecutivo';
+const API_URL = 'https://proyecto-ordinario-ingenieria-88f417e1c273.herokuapp.com/api/ejecutivo';
 
 const getAll = async (token) => {
     try {

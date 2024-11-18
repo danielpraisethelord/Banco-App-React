@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = 'http://localhost:8081/api/sucursal';
+const API_URL = 'https://proyecto-ordinario-ingenieria-88f417e1c273.herokuapp.com/api/sucursal';
 
 const getAll = async (token) => {
   try {

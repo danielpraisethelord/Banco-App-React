@@ -1,7 +1,7 @@
 import axios from 'axios';
 
-const API_URL = 'http://localhost:8081/api/cuenta';
-const API_CLIENTE_URL = 'http://localhost:8081/api/cliente';
+const API_URL = 'https://proyecto-ordinario-ingenieria-88f417e1c273.herokuapp.com/api/cuenta';
+const API_CLIENTE_URL = 'https://proyecto-ordinario-ingenieria-88f417e1c273.herokuapp.com/api/cliente';
 
 const getById = async (token) => {
     try {

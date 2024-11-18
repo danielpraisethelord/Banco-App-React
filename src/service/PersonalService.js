@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_URL = "http://localhost:8081/api/personal";
+const API_URL = "https://proyecto-ordinario-ingenieria-88f417e1c273.herokuapp.com/api/personal";
 
 const getAll = async (token) => {
     try {
